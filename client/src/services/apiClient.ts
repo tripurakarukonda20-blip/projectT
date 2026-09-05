@@ -1,4 +1,4 @@
-import { Transaction, RiskAssessment, Alert, AnalyticsOverview, InvestigationResult } from '../types';
+import { Transaction, RiskAssessment, Alert, AnalyticsOverview, InvestigationResult, FraudNetwork } from '../types';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
@@ -61,4 +61,7 @@ export const apiClient = {
     fetchApi<{ message: string }>('/simulation/reset', {
       method: 'POST',
     }),
+
+  // Fraud Network
+  getFraudNetwork: (entityId: string) => fetchApi<FraudNetwork>(`/fraud-network/${entityId}`),
 };

@@ -1,80 +1,91 @@
-# CareerPilot AI — Real-Time AI Interview Preparation Coach
+# RiskGuard AI
 
-CareerPilot AI is a full-stack Generative AI application designed to help undergraduate students and entry-level developers prepare for technical interviews. It provides customized mock interviews, real-time feedback, detailed performance metrics, final reports, and custom 7-day study plans.
+RiskGuard AI is a high-performance financial risk management platform designed for online merchants. 
 
----
+Merchants frequently face challenges with fraudulent transactions, account abuse, and coordinated fraud rings. RiskGuard AI provides a centralized dashboard to detect suspicious transactions in real-time, investigate high-risk entities with AI-assisted analysis, and uncover complex fraud networks before they cause significant financial loss.
 
-## Key Features
+## Core Features
 
-1. **Landing Page**: Product showcase and feature summary.
-2. **Student Authentication**: Register, Login, and Logout using Supabase Auth.
-3. **Onboarding & Profile Setup**: Tailor target role, experience level, known/weak tech stacks, and daily preparation goals.
-4. **Interview Setup**: Customize interview type (*Technical*, *HR*, *Mixed*), target role, topic, difficulty (*Easy*, *Medium*, *Hard*), and question count (3, 5, 10).
-5. **AI Question Generation**: Powered by Gemini API (`@google/genai`) with structured JSON prompts and server-side hidden expected points.
-6. **Real-time Session Status**: Powered by Supabase Realtime (`waiting`, `generating_question`, `question_ready`, `evaluating_answer`, `generating_feedback`, `saving_result`, `completed`, `failed`).
-7. **Answer Evaluation & Feedback**: Gemini evaluates answers based on technical correctness (40%), completeness (20%), clarity (15%), practical understanding (15%), and communication (10%).
-8. **Final Interview Report**: Comprehensive performance evaluation with percentage score, strong/weak areas, revision topics, and next difficulty recommendation.
-9. **7-Day AI Study Plan**: Customized plan focusing on student weak areas.
-10. **Interview History & Progress**: Review past mock interviews and track topic-wise progress.
+- **Transaction Risk Scoring:** Deterministic rule-based engines combined with behavioral analysis to calculate transparent risk scores for incoming transactions.
+- **Fraud Detection & Alerts:** Real-time generation of alerts when critical thresholds or anomalous patterns are detected.
+- **AI-Assisted Investigation:** Generates comprehensive, natural-language investigation summaries using Gemini AI, explaining exactly *why* a customer or transaction is considered risky based on observed evidence.
+- **Fraud Network Visualization:** Interactive charting that reveals hidden relationships between suspicious accounts, shared devices, overlapping payment methods, and linked locations.
+- **Fraud Attack Simulation:** A built-in testing utility that injects simulated, coordinated burst attacks (e.g., synthetic account creation and rapid high-value transactions) to demonstrate the platform's detection capabilities in a live environment.
+- **Analytics Dashboard:** High-level metrics giving merchants a clear overview of their current risk exposure and recent fraud trends.
 
----
+## Architecture
 
-## Tech Stack
+RiskGuard AI follows a modern, full-stack architecture:
 
-- **Frontend**: React.js, Vite, TypeScript, Tailwind CSS, Lucide React, React Hook Form, Zod, `@supabase/supabase-js`
-- **Backend**: Node.js, Express.js, TypeScript, `@google/genai` (Google GenAI SDK), `@supabase/supabase-js`, Zod, Rate Limiter, Helmet
-- **Database & Auth**: Supabase Auth, Supabase PostgreSQL, Row Level Security (RLS), Supabase Realtime
+- **Frontend:** React + Vite, styled with Tailwind CSS for a dark, professional, high-density fintech aesthetic.
+- **Backend:** Node.js + Express API server handling business logic, risk calculation, and simulation engines.
+- **Database:** Supabase (PostgreSQL) for reliable persistence of transactions, alerts, and entities.
+- **AI Integration:** Google Gemini AI API, used by the investigation service to synthesize raw risk factors and transaction histories into actionable, human-readable investigation reports.
 
----
+## API Structure
 
-## Getting Started Locally
+The backend exposes a clean RESTful API:
 
-### 1. Database Setup (Supabase)
-1. Create a new Supabase project.
-2. Open the **SQL Editor** in Supabase.
-3. Run the SQL script from [`supabase/migrations/20260805_initial_schema.sql`](./supabase/migrations/20260805_initial_schema.sql).
+- `GET /api/transactions` & `GET /api/transactions/:id` - Transaction history and details.
+- `POST /api/transactions/risk` - Evaluate a new transaction for risk.
+- `GET /api/alerts` & `PATCH /api/alerts/:id` - Fetch and manage active security alerts.
+- `GET /api/fraud-network/:entityId` - Retrieve relationship graphs for network visualization.
+- `GET /api/analytics/overview` - Fetch high-level risk and transaction metrics.
+- `POST /api/investigation` - Trigger a deep-dive Gemini AI investigation on a specific entity.
+- `POST /api/simulation/fraud-attack` - Inject a synthetic fraud burst for demonstration.
+- `POST /api/simulation/reset` - Clear the simulation state.
 
-### 2. Backend Setup (`server/`)
+## Local Setup
+
+### Prerequisites
+- Node.js (v18+)
+- A Supabase project (for PostgreSQL)
+- A Google Gemini API Key
+
+### Installation
+
+1. **Clone the repository and install dependencies:**
+   ```bash
+   cd client && npm install
+   cd ../server && npm install
+   ```
+
+2. **Environment Configuration:**
+   - In the `server` directory, copy `.env.example` to `.env` and fill in your Supabase connection strings and Gemini API key.
+   - In the `client` directory, copy `.env.example` to `.env` and provide any necessary frontend variables (e.g., API URL).
+
+3. **Database Migration:**
+   - Execute the SQL schema located in `supabase/migrations/20260904162000_riskguard_schema.sql` within your Supabase project's SQL editor.
+
+### Running the Application
+
+Start the backend API server:
 ```bash
 cd server
-npm install
-cp .env.example .env
-```
-Fill in `.env`:
-- `PORT=5000`
-- `SUPABASE_URL=your-supabase-url`
-- `SUPABASE_ANON_KEY=your-supabase-anon-key`
-- `SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key`
-- `GEMINI_API_KEY=your-gemini-api-key`
-- `CLIENT_URL=http://localhost:5173`
-
-Run backend:
-```bash
 npm run dev
 ```
 
-### 3. Frontend Setup (`client/`)
+Start the frontend development server:
 ```bash
 cd client
-npm install
-cp .env.example .env
-```
-Fill in `.env`:
-- `VITE_SUPABASE_URL=your-supabase-url`
-- `VITE_SUPABASE_ANON_KEY=your-supabase-anon-key`
-- `VITE_API_BASE_URL=http://localhost:5000`
-
-Run frontend:
-```bash
 npm run dev
 ```
+The application will typically be accessible at `http://localhost:5173`.
 
-Open [http://localhost:5173](http://localhost:5173) in your browser.
+## Demo Workflow
 
----
+To demonstrate the platform's capabilities:
+1. Open the **Dashboard**. It will initially show a healthy, low-risk state.
+2. Navigate to the **Fraud Simulation** panel (or use the API) and trigger a "Simulate Fraud Attack".
+3. Watch the dashboard instantly update: new high-risk transactions will appear, and critical alerts will populate the alert feed.
+4. Click on one of the newly generated alerts to open the **Investigator Page**.
+5. View the AI-generated investigation report (powered by Gemini) that clearly explains the synthetic attacker's behavior.
+6. Check the **Fraud Network** page to visually see how the simulated attacker shares payment methods and IPs with other suspicious nodes.
 
-## Production Deployment
+## What broke and how we got out
 
-- **Backend**: Deploy `server/` to Render, Railway, or Vercel Serverless. Ensure environment variables are configured.
-- **Frontend**: Deploy `client/` to Vercel, Netlify, or Cloudflare Pages.
-- **Database**: Managed by Supabase with Row Level Security enabled.
+This repository originally began as "CareerPilot AI," an interview-preparation prototype. During a rapid pivot for this hackathon, we transformed the entire codebase into **RiskGuard AI**, a merchant risk platform.
+
+**Challenges we faced:**
+- **Frontend vs. Backend Desync:** In our rush to build a visually impressive demo, we mistakenly built a completely client-side, hardcoded mock frontend that bypassed our newly developed Stage 2 backend (Express/Supabase).
+- **The Fix:** We caught the architectural drift before committing. We carefully reverted the rogue mock frontend implementation using precise `git restore` commands while preserving the validated Stage 2 backend endpoints. We then successfully integrated the real Express API with the frontend, ensuring that our "Simulate Fraud Attack" and "AI Investigation" features actually process data through the backend and Gemini API rather than relying on browser-side illusions.

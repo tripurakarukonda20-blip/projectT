@@ -1,109 +1,121 @@
-export interface UserProfile {
-  id: string;
-  full_name: string;
-  email?: string;
-  university?: string;
-  current_year?: string;
-  target_role?: string;
-  experience_level?: string;
-  preferred_difficulty?: string;
-  known_technologies?: string[];
-  weak_technologies?: string[];
-  daily_preparation_minutes?: number;
-  role?: string;
-  onboarding_completed?: boolean;
-}
+export type RiskLevel = 'LOW' | 'MEDIUM' | 'HIGH';
+export type TransactionStatus = 'COMPLETED' | 'PENDING' | 'DECLINED' | 'HOLD' | 'REFUNDED';
+export type AlertSeverity = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+export type AlertStatus = 'ACTIVE' | 'INVESTIGATING' | 'RESOLVED' | 'DISMISSED';
 
-export type ProcessingStatus =
-  | 'waiting'
-  | 'generating_question'
-  | 'question_ready'
-  | 'evaluating_answer'
-  | 'generating_feedback'
-  | 'saving_result'
-  | 'completed'
-  | 'failed';
-
-export interface InterviewSession {
-  id: string;
-  user_id: string;
-  target_role: string;
-  interview_type: string;
-  topic: string;
-  difficulty: string;
-  total_questions: number;
-  current_question_number: number;
-  status: 'in_progress' | 'completed' | 'failed';
-  processing_status: ProcessingStatus;
-  overall_score?: number;
-  performance_level?: string;
-  technical_summary?: string;
-  communication_summary?: string;
-  strong_areas?: string[];
-  weak_areas?: string[];
-  topics_to_revise?: string[];
-  next_difficulty?: string;
-  final_message?: string;
-  created_at?: string;
-  started_at?: string;
-  completed_at?: string;
-}
-
-export interface InterviewQuestion {
-  id: string;
-  session_id: string;
-  question: string;
-  topic: string;
-  difficulty: string;
-  skill_tested?: string;
-  question_order: number;
-  created_at?: string;
-}
-
-export interface InterviewAnswer {
-  id: string;
-  question_id: string;
-  session_id: string;
-  student_answer: string;
+export interface RiskFactor {
+  name: string;
   score: number;
-  result?: string;
-  correct_points?: string[];
-  missing_points?: string[];
-  incorrect_points?: string[];
-  technical_feedback?: string;
-  communication_feedback?: string;
-  improved_answer?: string;
-  follow_up_question?: string;
-  recommended_topic?: string;
-  created_at?: string;
+  description: string;
 }
 
-export interface StudyPlanDay {
-  day: number;
-  topic: string;
-  objective: string;
-  learning_activity: string;
-  practice_activity: string;
-  duration_minutes: number;
+export interface RiskAssessment {
+  score: number;
+  level: RiskLevel;
+  factors: RiskFactor[];
+  explanation: string;
+  recommendedAction: string;
 }
 
-export interface StudyPlan {
+export interface Transaction {
   id: string;
-  user_id: string;
-  session_id?: string;
-  plan_title: string;
-  plan_content: {
-    plan_title: string;
-    days: StudyPlanDay[];
+  customer_id: string | null;
+  amount: number;
+  currency: string;
+  timestamp: string;
+  merchant_id: string | null;
+  device_id: string | null;
+  ip_address: string | null;
+  location: string | null;
+  payment_method: string | null;
+  is_new_device: boolean;
+  previous_transactions: number;
+  chargeback_count: number;
+  refund_count: number;
+  velocity_24h: number;
+  ip_risk: number;
+  device_shared: number;
+  risk_score: number;
+  risk_level: RiskLevel;
+  status: TransactionStatus;
+  risk_assessment?: RiskAssessment;
+  created_at: string;
+}
+
+export interface Customer {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  joined_at: string;
+  total_spent: number;
+  fraud_flags: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Alert {
+  id: string;
+  type: string;
+  severity: AlertSeverity;
+  timestamp: string;
+  description: string;
+  affected_entity_id: string;
+  entity_type: 'TRANSACTION' | 'CUSTOMER' | 'NETWORK';
+  recommended_action: string | null;
+  status: AlertStatus;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface FraudNetworkNode {
+  id: string;
+  type: 'CUSTOMER' | 'DEVICE' | 'IP' | 'PAYMENT_METHOD' | 'LOCATION';
+  label: string;
+  risk: RiskLevel;
+}
+
+export interface FraudNetworkEdge {
+  source: string;
+  target: string;
+  type: 'SHARES_DEVICE' | 'SHARES_IP' | 'TRANSACTED_FROM' | 'USES_METHOD';
+}
+
+export interface FraudNetwork {
+  nodes: FraudNetworkNode[];
+  links: FraudNetworkEdge[];
+  summary: {
+    totalEntities: number;
+    suspiciousEntities: number;
+    potentialExposure: number;
+    riskLevel: RiskLevel;
   };
-  created_at?: string;
 }
 
-export interface TopicProgress {
-  id: string;
-  topic: string;
-  attempts: number;
-  average_score: number;
-  best_score: number;
-  last_attempted_at?: string;
+export interface InvestigationResult {
+  summary: string;
+  observedEvidence: string[];
+  riskFactors: string[];
+  relatedEntities: string[];
+  calculatedRisk: RiskLevel;
+  recommendation: string;
+  confidence: number;
+}
+
+export interface AnalyticsOverview {
+  totalTransactions: number;
+  highRiskTransactions: number;
+  fraudDetected: number;
+  potentialLossPrevented: number;
+  riskDistribution: { level: RiskLevel; count: number }[];
+  suspiciousTrends: { name: string; count: number }[];
+  alertCounts: { severity: AlertSeverity; count: number }[];
+  isPrototype: boolean;
+}
+
+export interface SimulationResult {
+  message: string;
+  generatedTransactions: number;
+  generatedAlerts: number;
+  attackType: string;
 }
