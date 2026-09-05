@@ -1,7 +1,7 @@
 {
-  "name": "careerpilot-ai-server",
+  "name": "riskguard-ai-server",
   "version": "1.0.0",
-  "description": "CareerPilot AI Backend Server",
+  "description": "RiskGuard AI Backend Server",
   "main": "dist/server.js",
   "type": "module",
   "scripts": {

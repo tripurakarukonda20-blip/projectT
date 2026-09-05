@@ -26,38 +26,35 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({ evaluation }) => {
             Correct Key Points
           </div>
           {evaluation.correct_points && evaluation.correct_points.length > 0 ? (
-            <ul className="space-y-1.5">
-              {evaluation.correct_points.map((pt, i) => (
-                <li key={i} className="text-xs text-slate-300 flex items-start gap-1.5">
-                  <span className="text-emerald-400">•</span>
+            <div className="space-y-2 text-sm text-slate-300">
+              {evaluation.correct_points.map((pt: any, i: any) => (
+                <div key={i} className="flex items-start gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
                   <span>{pt}</span>
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
           ) : (
             <p className="text-xs text-slate-500 italic">No specific correct points detected.</p>
           )}
         </div>
 
         {/* Missing Points */}
-        <div className="p-3.5 rounded-xl bg-amber-950/30 border border-amber-500/20">
-          <div className="flex items-center gap-2 text-amber-400 font-semibold text-xs mb-2">
-            <AlertTriangle className="w-4 h-4" />
-            Missing Points
-          </div>
-          {evaluation.missing_points && evaluation.missing_points.length > 0 ? (
-            <ul className="space-y-1.5">
-              {evaluation.missing_points.map((pt, i) => (
-                <li key={i} className="text-xs text-slate-300 flex items-start gap-1.5">
-                  <span className="text-amber-400">•</span>
+        {evaluation.missing_points && evaluation.missing_points.length > 0 && (
+          <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-4">
+            <h4 className="font-semibold text-amber-400 mb-2 flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4" /> Areas for Improvement
+            </h4>
+            <div className="space-y-2 text-sm text-amber-200/80">
+              {evaluation.missing_points.map((pt: any, i: any) => (
+                <div key={i} className="flex items-start gap-2">
+                  <div className="h-1.5 w-1.5 rounded-full bg-amber-500 mt-1.5 shrink-0" />
                   <span>{pt}</span>
-                </li>
+                </div>
               ))}
-            </ul>
-          ) : (
-            <p className="text-xs text-slate-500 italic">None. All major expected points covered!</p>
-          )}
-        </div>
+            </div>
+          </div>
+        )}
 
         {/* Incorrect Points */}
         <div className="p-3.5 rounded-xl bg-rose-950/30 border border-rose-500/20">
@@ -67,7 +64,7 @@ export const FeedbackPanel: React.FC<FeedbackPanelProps> = ({ evaluation }) => {
           </div>
           {evaluation.incorrect_points && evaluation.incorrect_points.length > 0 ? (
             <ul className="space-y-1.5">
-              {evaluation.incorrect_points.map((pt, i) => (
+              {evaluation.incorrect_points.map((pt: any, i: any) => (
                 <li key={i} className="text-xs text-slate-300 flex items-start gap-1.5">
                   <span className="text-rose-400">•</span>
                   <span>{pt}</span>

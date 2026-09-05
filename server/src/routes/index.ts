@@ -1,44 +1,38 @@
 import { Router } from 'express';
-import { requireAuth } from '../middleware/auth.js';
-import { getProfile, updateProfile } from '../controllers/profile.controller.js';
-import { getDashboardData, getProgressData } from '../controllers/dashboard.controller.js';
-import {
-  startInterview,
-  getInterviews,
-  getInterviewById,
-  generateNextQuestion,
-  submitAnswer,
-  completeInterview,
-} from '../controllers/interview.controller.js';
-import {
-  createStudyPlan,
-  getStudyPlans,
-  getStudyPlanById,
-} from '../controllers/studyPlan.controller.js';
+// We are temporarily removing requireAuth to allow easy prototype testing,
+// but in a production app, it would wrap all these routes.
+// import { requireAuth } from '../middleware/auth.js';
+
+import { getTransactions, getTransactionById, processTransactionRisk } from '../controllers/transaction.controller.js';
+import { getAlerts, getAlertById, updateAlertStatus } from '../controllers/alert.controller.js';
+import { getFraudNetwork } from '../controllers/fraudNetwork.controller.js';
+import { getAnalyticsOverview } from '../controllers/analytics.controller.js';
+import { investigateEntity } from '../controllers/investigation.controller.js';
+import { triggerFraudAttack, resetSimulation } from '../controllers/simulation.controller.js';
 
 const router = Router();
 
-// Profile routes
-router.get('/profile', requireAuth, getProfile);
-router.put('/profile', requireAuth, updateProfile);
+// Transactions API
+router.get('/transactions', getTransactions);
+router.get('/transactions/:id', getTransactionById);
+router.post('/transactions/risk', processTransactionRisk); // Evaluates a new transaction
 
-// Dashboard routes
-router.get('/dashboard', requireAuth, getDashboardData);
+// Alerts API
+router.get('/alerts', getAlerts);
+router.get('/alerts/:id', getAlertById);
+router.patch('/alerts/:id', updateAlertStatus);
 
-// Interview routes
-router.post('/interviews/start', requireAuth, startInterview);
-router.get('/interviews', requireAuth, getInterviews);
-router.get('/interviews/:id', requireAuth, getInterviewById);
-router.post('/interviews/:id/question', requireAuth, generateNextQuestion);
-router.post('/interviews/:id/answer', requireAuth, submitAnswer);
-router.post('/interviews/:id/complete', requireAuth, completeInterview);
+// Fraud Network API
+router.get('/fraud-network/:entityId', getFraudNetwork);
 
-// Study plan routes
-router.post('/study-plans', requireAuth, createStudyPlan);
-router.get('/study-plans', requireAuth, getStudyPlans);
-router.get('/study-plans/:id', requireAuth, getStudyPlanById);
+// Analytics API
+router.get('/analytics/overview', getAnalyticsOverview);
 
-// Progress routes
-router.get('/progress', requireAuth, getProgressData);
+// AI Investigator API
+router.post('/investigation', investigateEntity);
+
+// Fraud Simulation API
+router.post('/simulation/fraud-attack', triggerFraudAttack);
+router.post('/simulation/reset', resetSimulation);
 
 export default router;
